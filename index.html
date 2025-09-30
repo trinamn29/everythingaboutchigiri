@@ -1,639 +1,146 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Chigiri — Red-Pink Modern — Single File</title>
-<meta name="description" content="Chigiri themed single file: unified red/pink background, big UI, modern interactive elements, no images." />
-<!--
-  Single-file index.html
-  - Unified background (red/pink), modern look, large typography
-  - More interactive: parallax, button ripple, animated shimmer bars, quiz meter
-  - No external images; all SVG + CSS + JS inline
-  - Accessibility: semantic HTML, prefers-reduced-motion respected, keyboard access
-  - Edit :root tokens to tweak theme
--->
-<style>
-  /* =========================
-     DESIGN TOKENS — RED/PINK DOMINANT
-     Edit here to change look quickly
-     ========================= */
-  :root{
-    --base: 20px;                /* BIGGER UI */
-    --gap: 26px;
-    --radius: 18px;
-    --max-width: 1200px;
-    --line: 1.5;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chigiri Hyoma - Blue Lock Wiki</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212; /* Nền thống nhất */
+      color: #f5f5f5;
+      line-height: 1.6;
+    }
 
-    /* Unified background (main) - strong pink/red */
-    --bg-solid: #2a0713;         /* dark maroon base for depth */
-    --bg-gradient-start: #3b0718;/* top */
-    --bg-gradient-end: #ff2d6d;  /* bottom pink glow - subtle */
-    --panel: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+    header {
+      background-color: #1f1f1f;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #333;
+    }
 
-    /* Primary accents: hair red-pink + warm highlight */
-    --pink-1: #ff2d6d;   /* vivid pink */
-    --pink-2: #ff5a8a;   /* lighter pink */
-    --warm: #ffd166;     /* small warm accent */
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: #ff4b91;
+    }
 
-    /* text */
-    --text-light: #fff7fa;
-    --muted: #f3c6d1;
+    nav {
+      background-color: #1f1f1f;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      border-bottom: 1px solid #333;
+    }
 
-    --shadow-soft: 0 12px 30px rgba(0,0,0,0.6);
-    --glass: rgba(255,255,255,0.03);
+    nav a {
+      color: #ccc;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
 
-    --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    nav a:hover {
+      color: #ff4b91;
+    }
 
-    /* typography scale */
-    --h1: 3.2rem;
-    --h2: 1.6rem;
-    --lead: 1.2rem;
-  }
+    section {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
 
-  /* CHIGIRI MODE (brighter) */
-  html.chigiri-mode { 
-    --pink-1: #ff3b75; --pink-2:#ff86a6; --bg-gradient-end:#ff5a8a;
-  }
+    section h2 {
+      color: #ff4b91;
+      margin-top: 0;
+    }
 
-  /* ========== base reset & page layout ========== */
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:var(--font-sans);
-    font-size:var(--base);
-    color:var(--text-light);
-    background: linear-gradient(180deg, var(--bg-gradient-start), var(--bg-gradient-end));
-    background-attachment: fixed;
-    line-height:var(--line);
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    padding:28px;
-    display:flex;
-    justify-content:center;
-  }
+    footer {
+      background-color: #1f1f1f;
+      color: #aaa;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
 
-  .wrap{
-    width:100%;
-    max-width:var(--max-width);
-    display:grid;
-    gap:var(--gap);
-    grid-template-columns: 1fr;
-  }
-
-  /* ========== HERO ========== */
-  header.site-hero{
-    position:relative;
-    overflow:visible;
-    border-radius:22px;
-    padding:32px;
-    display:grid;
-    gap:18px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-    box-shadow:var(--shadow-soft);
-    border:1px solid rgba(255,255,255,0.03);
-  }
-
-  /* floating decorative blobs behind hero (SVG) */
-  .hero-bg { position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0.9; filter: blur(18px); }
-
-  .hero-inner{ position:relative; z-index:4; display:flex; gap:28px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
-
-  .hero-title{ max-width:66%; }
-  h1{
-    margin:0 0 10px 0;
-    font-size:var(--h1);
-    line-height:1.02;
-    color:var(--pink-1);
-    font-weight:900;
-    text-transform:uppercase;
-    letter-spacing: -0.02em;
-    -webkit-text-stroke: 0.6px rgba(0,0,0,0.12);
-  }
-  p.lead{ margin:0; color:var(--muted); font-size:var(--lead); }
-
-  /* CTA row */
-  .hero-cta{ display:flex; gap:12px; margin-top:12px; align-items:center; }
-
-  /* modern buttons (ripple + hover) */
-  .btn {
-    position:relative;
-    overflow:hidden;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    background: linear-gradient(90deg,var(--pink-1),var(--pink-2));
-    color:var(--text-light);
-    border:0;
-    padding:12px 16px;
-    border-radius:12px;
-    font-weight:800;
-    cursor:pointer;
-    box-shadow: 0 12px 30px rgba(255,45,109,0.12);
-    transition: transform .18s cubic-bezier(.2,.9,.2,1), box-shadow .18s;
-  }
-  .btn:before{ content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.06)); border-radius:12px; pointer-events:none; }
-  .btn:active{ transform:translateY(2px) scale(.995); }
-  .btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--text-light); box-shadow:none; padding:10px 14px; font-weight:700; }
-
-  /* ripple effect */
-  .btn .ripple{ position:absolute; border-radius:50%; transform:scale(0); background: rgba(255,255,255,0.14); pointer-events:none; transition:transform .6s ease, opacity .9s ease; opacity:0; }
-
-  /* card panels */
-  .card{
-    position:relative;
-    z-index:2;
-    background:var(--panel);
-    padding:20px;
-    border-radius:16px;
-    box-shadow:var(--shadow-soft);
-    border:1px solid rgba(255,255,255,0.03);
-    overflow:visible;
-  }
-
-  /* layout for main content and sidebar on larger screens */
-  main{ display:grid; gap:22px; grid-template-columns: 2fr 1fr; align-items:start; }
-  @media (max-width:980px){ main{ grid-template-columns: 1fr } .hero-title{ max-width:100% } }
-
-  /* timeline + icons */
-  .timeline{ display:flex; flex-direction:column; gap:16px; padding-left:12px }
-  .timeline-item{ display:flex; gap:16px; align-items:flex-start }
-  .timeline-item svg{ width:44px; height:44px; flex:0 0 44px; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6)); }
-
-  /* STATS — bigger with shimmer */
-  .stats{ display:flex; flex-direction:column; gap:16px; margin-top:16px }
-  .stat{ display:flex; gap:16px; align-items:center; justify-content:space-between; font-size:1.05rem }
-  .stat .label{ min-width:160px; font-weight:800; color:var(--text-light) }
-
-  .bar-wrap{ flex:1; height:20px; background: rgba(255,255,255,0.02); border-radius:999px; overflow:hidden; position:relative; border:1px solid rgba(255,255,255,0.03); }
-  .bar{ height:100%; width:0%; border-radius:999px; background: linear-gradient(90deg,var(--pink-1),var(--pink-2)); box-shadow: inset 0 -6px 18px rgba(0,0,0,0.35); transition: width 1200ms cubic-bezier(.2,.9,.2,1); position:relative; overflow:hidden; }
-  .bar::after{ content:''; position:absolute; inset:0; background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02), rgba(255,255,255,0.12)); transform: translateX(-60%); transition: transform 1.6s linear; }
-  .bar[data-hint]::before{ content: attr(data-hint); position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:12px; font-weight:800; color:#0b0b0b; padding:3px 8px; border-radius:10px; background: linear-gradient(90deg,var(--warm), rgba(255,255,255,0.05)); }
-
-  /* animate shimmer when bar grows */
-  .bar.animate::after{ transform: translateX(120%); }
-
-  /* quote */
-  blockquote{ margin:0; padding:18px; border-left:6px solid var(--warm); background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent); border-radius:12px; font-size:1.05rem; color:var(--text-light) }
-
-  /* signature moves */
-  .move{ display:flex; gap:18px; align-items:center; margin-top:18px }
-  .move svg{ width:130px; height:86px; flex:0 0 130px; filter: drop-shadow(0 8px 26px rgba(0,0,0,0.6)); }
-
-  /* FANWORKS */
-  .fanworks li{ margin-bottom:10px; font-size:1.05rem; color:var(--muted) }
-
-  /* QUIZ — result meter modern */
-  .quiz{ display:flex; flex-direction:column; gap:12px }
-  .meter { width:100%; height:90px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05)); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.2rem; color:var(--text-light); position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.03); }
-  .meter .needle{ position:absolute; bottom:-6px; left:50%; width:3px; height:120%; background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.6)); transform-origin:bottom center; transform: rotate(0deg); transition: transform 900ms cubic-bezier(.2,.9,.2,1); pointer-events:none; }
-  .meter .fill { position:absolute; inset:0; background: linear-gradient(90deg, rgba(255,45,109,0.18), rgba(255,210,102,0.06)); mix-blend-mode:screen; opacity:0.7; }
-
-  /* small footer */
-  footer{ display:flex; gap:12px; justify-content:space-between; align-items:center; padding:18px; font-size:1rem; color:var(--muted) }
-
-  /* hover micro-interactions */
-  a, button { transition: transform .16s cubic-bezier(.2,.9,.2,1), box-shadow .16s; }
-  a:hover, button:hover{ transform:translateY(-6px) }
-
-  /* focus states */
-  :focus{ outline:none }
-  :focus-visible{ outline:4px solid rgba(255,255,255,0.04); outline-offset:6px; border-radius:10px; }
-
-  /* keyboard hint style */
-  kbd { display:inline-block; padding:6px 10px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); font-weight:900; color:var(--text-light) }
-
-  /* reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    .bar, .bar::after, .hero-bg, .hero-inner, .meter .needle { transition: none !important; animation: none !important; transform: none !important; }
-  }
-
-  /* small responsive tweaks */
-  @media (max-width:768px){
-    :root{ --h1:2.4rem; }
-    .hero-inner{ gap:12px; }
-    .hero-title{ max-width:100%; }
-    .move svg{ width:100px; height:70px; }
-  }
-</style>
+    .highlight {
+      color: #ff9bd2;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-<div class="wrap" id="app">
-  <!-- HERO -->
-  <header class="site-hero" role="banner" aria-labelledby="hero-title">
-    <!-- Decorative SVG blobs & streaks (no images) -->
-    <div class="hero-bg" aria-hidden="true">
-      <svg viewBox="0 0 1400 420" preserveAspectRatio="none" width="100%" height="100%">
-        <defs>
-          <linearGradient id="gPink" x1="0" x2="1"><stop offset="0" stop-color="rgba(255,45,109,0.85)"/><stop offset="1" stop-color="rgba(255,90,138,0.85)"/></linearGradient>
-          <filter id="fBlur"><feGaussianBlur stdDeviation="40" /></filter>
-        </defs>
-        <g filter="url(#fBlur)">
-          <ellipse cx="200" cy="100" rx="260" ry="120" fill="url(#gPink)" opacity="0.15"></ellipse>
-          <ellipse cx="1100" cy="220" rx="360" ry="160" fill="rgba(255,90,138,0.14)"></ellipse>
-          <path d="M0 340 C 200 280 400 200 700 220 C1000 240 1200 300 1400 200 L1400 420 L0 420 Z" fill="rgba(255,45,109,0.06)"></path>
-        </g>
-      </svg>
-    </div>
-
-    <div class="hero-inner">
-      <div class="hero-title">
-        <h1 id="hero-title">CHIGIRI — Everything (Blue Lock)</h1>
-        <p class="lead">Unified red-pink background, large UI, modern interactive elements — scroll down to feel the speed.</p>
-
-        <div class="hero-cta">
-          <button class="btn" id="mainExplore"><span>Explore</span><span class="ripple"></span></button>
-          <button class="btn ghost" id="mainQuiz">Quick Quiz</button>
-          <button class="btn ghost" id="toggle-chigiri" aria-pressed="false">Bright Mode</button>
-        </div>
-      </div>
-
-      <div style="min-width:320px; z-index:4">
-        <div class="card" role="group" aria-label="Quick summary">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-            <div>
-              <div style="font-weight:900; font-size:1.15rem">Chigiri Hyoma</div>
-              <div class="muted" id="hero-desc">Speed & signature pink streak. Interactive demo.</div>
-            </div>
-            <div style="text-align:right">
-              <div style="font-size:1.05rem;font-weight:900;color:var(--pink-1)">#CHIGIRI</div>
-              <div class="muted" style="font-size:.95rem">Press <kbd>C</kbd></div>
-            </div>
-          </div>
-
-          <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
-            <button class="btn" id="toggle-sound" aria-pressed="false">Sound</button>
-            <button class="btn ghost" id="revealEgg">Secret</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <header>
+    <h1>Chigiri Hyoma</h1>
+    <p>The Speedster of Blue Lock</p>
   </header>
 
-  <!-- MAIN -->
-  <main>
-    <!-- LEFT: content -->
-    <section class="card" id="profiles" role="main" aria-labelledby="profilesHeading">
-      <h2 id="profilesHeading" style="margin-top:0; font-size:var(--h2); color:var(--pink-2)">Character Profile</h2>
-      <p class="muted">Short backstory — traits — timeline.</p>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#past">Past</a>
+    <a href="#blue-lock">Blue Lock Journey</a>
+    <a href="#abilities">Abilities</a>
+    <a href="#personality">Personality</a>
+    <a href="#development">Character Growth</a>
+    <a href="#facts">Fun Facts</a>
+  </nav>
 
-      <div class="timeline" role="list" aria-label="Timeline">
-        <div class="timeline-item" role="listitem">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--pink-2)"/></svg>
-          <div>
-            <div style="font-weight:900; color:var(--text-light)">Early life — The origin</div>
-            <div class="muted">Introverted speedster with explosive bursts, discovered in youth matches.</div>
-          </div>
-        </div>
+  <section id="about">
+    <h2>About Chigiri Hyoma</h2>
+    <p><span class="highlight">Chigiri Hyoma</span> is one of the key players in the anime and manga series <span class="highlight">Blue Lock</span>. Known for his lightning-fast speed and elegant style of play, he quickly became a fan favorite. His iconic long red hair and sharp gaze make him stand out on the field and among his peers.</p>
+  </section>
 
-        <div class="timeline-item">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="6" fill="var(--pink-1)"/></svg>
-          <div>
-            <div style="font-weight:900; color:var(--text-light)">Blue Lock entrance — Rivalries</div>
-            <div class="muted">Competition pushes growth — speed vs technique tradeoffs.</div>
-          </div>
-        </div>
+  <section id="past">
+    <h2>Chigiri's Past</h2>
+    <p>Before joining Blue Lock, Chigiri was a rising star in his high school soccer team. However, a serious knee injury caused him to step away from the sport out of fear of permanent damage. His passion for soccer never faded, but his inner conflict held him back for a long time.</p>
+    <p>He was known as a prodigy from a young age, often compared to top athletes, and was scouted by many schools. But his injury made him cautious, and for a while, he played conservatively, refusing to sprint or risk reinjury. This period of hesitation deeply impacted his confidence and identity as a striker.</p>
+  </section>
 
-        <div class="timeline-item">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c6-8 14-8 20 0" fill="none" stroke="var(--warm)" stroke-width="2" stroke-linecap="round"/></svg>
-          <div>
-            <div style="font-weight:900; color:var(--text-light)">Signature moment</div>
-            <div class="muted">A decisive sprint that changed momentum.</div>
-          </div>
-        </div>
-      </div>
+  <section id="blue-lock">
+    <h2>Journey in Blue Lock</h2>
+    <p>Chigiri's turning point came during his time in the Blue Lock program. Forced to face his fears in high-stakes matches, he eventually regained his confidence. His breakthrough moment was when he decided to sprint at full speed again — reminding everyone of his immense potential.</p>
+    <p>From that moment on, Chigiri became a key asset to his team. His ability to dash past defenders made him one of the most dangerous players in the program. Throughout the series, he continues to evolve not just physically, but mentally and emotionally as well.</p>
+  </section>
 
-      <hr style="margin:20px 0;border:none;border-top:1px solid rgba(255,255,255,0.04)">
+  <section id="abilities">
+    <h2>Abilities & Skills</h2>
+    <ul>
+      <li><strong>Top Speed:</strong> Chigiri is arguably the fastest player in Blue Lock. His acceleration is unmatched.</li>
+      <li><strong>Agility & Balance:</strong> He moves with precision even at high speeds.</li>
+      <li><strong>Spatial Awareness:</strong> He knows exactly when and where to make runs.</li>
+      <li><strong>Dribbling:</strong> His speed allows him to dribble past defenders effortlessly.</li>
+      <li><strong>Stamina:</strong> He's able to maintain high speed for extended periods.</li>
+    </ul>
+  </section>
 
-      <h3 style="font-size:1.15rem; color:var(--pink-2)">Stats & Skills</h3>
-      <div class="stats" role="list" aria-label="Skills">
-        <div class="stat">
-          <div class="label">Speed</div>
-          <div class="bar-wrap" aria-hidden="true"><div class="bar" data-key="speed" data-hint="92%"></div></div>
-        </div>
-        <div class="stat">
-          <div class="label">Technique</div>
-          <div class="bar-wrap"><div class="bar" data-key="tech" data-hint="78%"></div></div>
-        </div>
-        <div class="stat">
-          <div class="label">Mentality</div>
-          <div class="bar-wrap"><div class="bar" data-key="mental" data-hint="84%"></div></div>
-        </div>
-        <div class="stat">
-          <div class="label">Creativity</div>
-          <div class="bar-wrap"><div class="bar" data-key="creativity" data-hint="88%"></div></div>
-        </div>
-      </div>
+  <section id="personality">
+    <h2>Personality</h2>
+    <p>Chigiri is calm, composed, and reserved. He often keeps to himself but is fiercely competitive on the field. His quiet demeanor hides a passionate heart, and he possesses an unwavering determination to overcome his limits. Once he regains his confidence, he becomes more expressive and assertive.</p>
+  </section>
 
-      <hr style="margin:20px 0;border:none;border-top:1px solid rgba(255,255,255,0.04)">
+  <section id="development">
+    <h2>Character Development</h2>
+    <p>Chigiri's development arc is one of the most inspiring in Blue Lock. From a fearful, injured player to a confident striker chasing goals again, his journey showcases the theme of breaking personal limits. His transformation serves as a motivational message about reclaiming your potential despite setbacks.</p>
+  </section>
 
-      <h3 style="font-size:1.15rem; color:var(--pink-2)">Signature Moves</h3>
-      <div class="move">
-        <svg viewBox="0 0 160 96" role="img" aria-label="Feather sprint">
-          <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--warm)"/></marker></defs>
-          <path d="M14 78 q46 -70 110 -34" fill="none" stroke="url(#gStroke1)" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow)"></path>
-          <defs>
-            <linearGradient id="gStroke1" x1="0" x2="1"><stop offset="0" stop-color="var(--pink-1)"/><stop offset="1" stop-color="var(--pink-2)"/></linearGradient>
-          </defs>
-        </svg>
-        <div>
-          <div style="font-weight:900">Feather Sprint</div>
-          <div class="muted">Diagonal acceleration and soft curl to confuse defenders.</div>
-        </div>
-      </div>
+  <section id="facts">
+    <h2>Fun Facts</h2>
+    <ul>
+      <li>Chigiri’s hair is based on traditional samurai aesthetics.</li>
+      <li>He is often called “Princess” by other players due to his appearance — something he pretends to hate but secretly embraces.</li>
+      <li>His favorite move is the high-speed cut-in followed by a curved shot.</li>
+      <li>He has one of the highest fan followings in the Blue Lock series.</li>
+    </ul>
+  </section>
 
-      <div style="height:18px"></div>
-
-      <div class="move">
-        <svg viewBox="0 0 160 96" role="img" aria-label="Jink & cut">
-          <path d="M12 78 q36 -60 66 -20 q20 30 60 -8" fill="none" stroke="var(--pink-2)" stroke-width="4" stroke-linecap="round"></path>
-          <circle cx="145" cy="18" r="6" fill="var(--warm)"/>
-        </svg>
-        <div>
-          <div style="font-weight:900">Jink & Cut</div>
-          <div class="muted">Short burst, sharp cut — timing beats raw speed.</div>
-        </div>
-      </div>
-
-      <hr style="margin:20px 0;border:none;border-top:1px solid rgba(255,255,255,0.04)">
-
-      <h3 style="font-size:1.15rem; color:var(--pink-2)">Fanworks (text)</h3>
-      <ul class="fanworks">
-        <li><strong>Prompt:</strong> Rainy training — Chigiri finds a new rhythm.</li>
-        <li><strong>Prompt:</strong> Rivalry microfic — a split-second decision.</li>
-        <li><em>Placeholder:</em> Link text to fan repository.</li>
-      </ul>
-    </section>
-
-    <!-- RIGHT: interactive sidebar -->
-    <aside class="card" role="complementary" aria-labelledby="interactiveHeading">
-      <h3 id="interactiveHeading" style="margin-top:0; color:var(--pink-2)">Interactive</h3>
-
-      <!-- QUIZ -->
-      <section id="quiz" aria-labelledby="quizTitle" class="quiz" role="region">
-        <h4 id="quizTitle">Are you Chigiri-style?</h4>
-        <form id="quizForm" aria-describedby="quizDesc">
-          <p id="quizDesc" class="muted">4 questions — choose then press Get Result.</p>
-
-          <fieldset>
-            <legend class="sr-only">Q1</legend>
-            <label><input type="radio" name="q1" value="burst" required> Burst speed</label><br>
-            <label><input type="radio" name="q1" value="steady"> Steady pace</label>
-          </fieldset>
-
-          <fieldset>
-            <legend class="sr-only">Q2</legend>
-            <label><input type="radio" name="q2" value="yes" required> Yes</label><br>
-            <label><input type="radio" name="q2" value="no"> No</label>
-          </fieldset>
-
-          <fieldset>
-            <legend class="sr-only">Q3</legend>
-            <label><input type="radio" name="q3" value="attack" required> Attack-first</label><br>
-            <label><input type="radio" name="q3" value="defend"> Defensive</label>
-          </fieldset>
-
-          <fieldset>
-            <legend class="sr-only">Q4</legend>
-            <label><input type="radio" name="q4" value="speed" required> Speed</label><br>
-            <label><input type="radio" name="q4" value="tech"> Technique</label>
-          </fieldset>
-
-          <div style="display:flex; gap:12px; margin-top:10px">
-            <button type="submit" class="btn" id="quizSubmit">Get Result <span class="ripple"></span></button>
-            <button type="button" class="btn ghost" id="quizReset">Reset</button>
-          </div>
-        </form>
-
-        <!-- meter -->
-        <div style="margin-top:14px">
-          <div class="meter" id="quizMeter" aria-hidden="true">
-            <div class="fill" id="meterFill"></div>
-            <div id="meterText">Take the quiz</div>
-            <div class="needle" id="meterNeedle" style="transform:rotate(-90deg)"></div>
-          </div>
-        </div>
-
-        <div id="quizResult" aria-live="polite" style="margin-top:12px; font-weight:900; color:var(--pink-1)"></div>
-      </section>
-
-      <hr style="margin:18px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
-
-      <section aria-labelledby="tokensTitle">
-        <h4 id="tokensTitle" style="color:var(--pink-2)">Design tokens</h4>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-family:monospace; color:var(--muted);">
-          <div style="background:rgba(255,255,255,0.02); padding:8px; border-radius:8px"><strong>--pink-1</strong><div style="font-size:.95rem">var(--pink-1)</div></div>
-          <div style="background:rgba(255,255,255,0.02); padding:8px; border-radius:8px"><strong>--bg-gradient-end</strong><div style="font-size:.95rem">var(--bg-gradient-end)</div></div>
-          <div style="background:rgba(255,255,255,0.02); padding:8px; border-radius:8px"><strong>--base</strong><div style="font-size:.95rem">var(--base)</div></div>
-          <div style="background:rgba(255,255,255,0.02); padding:8px; border-radius:8px"><strong>--gap</strong><div style="font-size:.95rem">var(--gap)</div></div>
-        </div>
-      </section>
-    </aside>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="card" role="contentinfo">
-    <div>
-      <div style="font-weight:900; color:var(--pink-2)">Chigiri — Red-Pink Modern</div>
-      <div class="muted">Single file, no images. Keyboard: C toggles bright mode.</div>
-    </div>
-
-    <div style="display:flex; gap:12px; align-items:center">
-      <button id="themeToggle" class="btn ghost">Toggle theme</button>
-      <a href="#" id="share" style="color:var(--pink-2); text-decoration:underline;">Share (copy)</a>
-    </div>
+  <footer>
+    <p>© 2025 Chigiri Hyoma Wiki. All rights reserved.</p>
   </footer>
-</div>
-
-<!-- Inline JS: interactions, animations, accessibility -->
-<script>
-/* Utility */
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
-const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* STATE */
-const state = {
-  chigiri: localStorage.getItem('chigiri-mode')==='true',
-  sound: localStorage.getItem('chigiri-sound')==='true'
-};
-
-/* Apply persisted mode */
-function applyState(){
-  document.documentElement.classList.toggle('chigiri-mode', state.chigiri);
-  $('#toggle-chigiri')?.setAttribute('aria-pressed', String(state.chigiri));
-}
-applyState();
-
-/* RIPPLE effect for buttons */
-function attachRipples(){
-  $$('button.btn').forEach(btn=>{
-    btn.addEventListener('pointerdown', e=>{
-      const r = document.createElement('span');
-      r.className = 'ripple';
-      const size = Math.max(btn.clientWidth, btn.clientHeight) * 1.2;
-      r.style.width = r.style.height = size + 'px';
-      const rect = btn.getBoundingClientRect();
-      r.style.left = (e.clientX - rect.left - size/2) + 'px';
-      r.style.top = (e.clientY - rect.top - size/2) + 'px';
-      btn.appendChild(r);
-      requestAnimationFrame(()=> {
-        r.style.transform = 'scale(1)';
-        r.style.opacity = '1';
-      });
-      setTimeout(()=> {
-        r.style.opacity = '0';
-        r.style.transform = 'scale(1.4)';
-        setTimeout(()=> r.remove(), 600);
-      }, 500);
-    });
-  });
-}
-attachRipples();
-
-/* Animate skill bars with shimmer */
-function animateBarsOnce(){
-  const bars = $$('.bar');
-  const map = { speed:92, tech:78, mental:84, creativity:88 };
-  bars.forEach((b, i) => {
-    const k = b.dataset.key;
-    const val = map[k] || 60;
-    // launch staggered
-    setTimeout(()=> {
-      b.style.width = val + '%';
-      b.classList.add('animate');
-      // remove shimmer class after animation
-      setTimeout(()=> b.classList.remove('animate'), 1400);
-    }, 300 + i*220);
-  });
-}
-
-/* Intersection observer to trigger bars when visible */
-const mainSec = document.querySelector('section[role="main"]');
-if('IntersectionObserver' in window && mainSec){
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){ animateBarsOnce(); io.disconnect(); }
-    });
-  }, { threshold: 0.2 });
-  io.observe(mainSec);
-} else animateBarsOnce();
-
-/* QUIZ logic + meter animation */
-const quizForm = $('#quizForm');
-const qt = $('#quizResult');
-const meter = $('#quizMeter');
-const needle = $('#meterNeedle');
-const meterText = $('#meterText');
-const fill = $('#meterFill');
-
-function computeQuiz(fd){
-  let s=0;
-  if(fd.get('q1')==='burst') s+=25;
-  if(fd.get('q2')==='yes') s+=25;
-  if(fd.get('q3')==='attack') s+=25;
-  if(fd.get('q4')==='speed') s+=25;
-  return s;
-}
-quizForm?.addEventListener('submit', e=>{
-  e.preventDefault();
-  const fd = new FormData(quizForm);
-  const score = computeQuiz(fd);
-  // text feedback
-  let message = score>=75 ? `Totally Chigiri — ${score}%` : score>=50 ? `Partially Chigiri — ${score}%` : `Not Chigiri — ${score}%`;
-  qt.textContent = message;
-  // animate meter: needle rotates from -90deg (0%) to 90deg (100%)
-  const deg = -90 + (score/100)*180;
-  if(!prefersReduced){
-    needle.style.transition = 'transform 900ms cubic-bezier(.2,.9,.2,1)';
-  } else {
-    needle.style.transition = 'none';
-  }
-  needle.style.transform = `rotate(${deg}deg)`;
-  meterText.textContent = message;
-  // subtle fill opacity
-  fill.style.opacity = Math.max(0.2, score/100);
-});
-
-/* Reset quiz */
-$('#quizReset')?.addEventListener('click', ()=>{
-  quizForm.reset(); qt.textContent=''; meterText.textContent='Take the quiz'; needle.style.transform='rotate(-90deg)'; fill.style.opacity=0.35;
-});
-
-/* Keyboard shortcuts */
-document.addEventListener('keydown', e=>{
-  if(e.key.toLowerCase()==='c'){
-    state.chigiri = !state.chigiri;
-    localStorage.setItem('chigiri-mode', state.chigiri);
-    applyState();
-    flashToast(`Bright mode ${state.chigiri ? 'ON' : 'OFF'}`);
-  }
-  if(e.shiftKey && e.key.toLowerCase()==='h'){ $('#revealEgg')?.click(); }
-});
-
-/* Toast */
-function flashToast(msg){
-  const t = document.createElement('div');
-  t.textContent = msg;
-  Object.assign(t.style, { position:'fixed', right:'18px', bottom:'18px', padding:'10px 14px', background:'rgba(0,0,0,0.5)', color:'#fff', borderRadius:'10px', zIndex:9999, fontWeight:800 });
-  document.body.appendChild(t);
-  setTimeout(()=> t.style.opacity = '0', 1200);
-  setTimeout(()=> t.remove(), 1800);
-}
-
-/* Simple WebAudio short ping */
-let audioCtx, g, o;
-function initAudio(){
-  if(!audioCtx){ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); g = audioCtx.createGain(); g.gain.value = 0.02; g.connect(audioCtx.destination); o = audioCtx.createOscillator(); o.type='sine'; o.frequency.value = 520; o.connect(g); o.start(); }
-}
-$('#toggle-sound')?.addEventListener('click', ()=>{
-  if(state.sound){ audioCtx?.suspend(); state.sound=false; localStorage.setItem('chigiri-sound','false'); }
-  else { initAudio(); audioCtx.resume(); state.sound=true; localStorage.setItem('chigiri-sound','true'); setTimeout(()=> { g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.6); setTimeout(()=> audioCtx.suspend(), 1800); }, 900); }
-});
-
-/* reveal secret */
-$('#revealEgg')?.addEventListener('click', ()=> {
-  const node = document.createElement('div');
-  node.textContent = 'Secret: Surprise move beats expectation.';
-  node.style.fontWeight = '900'; node.style.color = 'var(--pink-2)'; node.style.marginTop = '10px';
-  $('#revealEgg').after(node);
-  setTimeout(()=> node.remove(), 5000);
-});
-
-/* Tooling: hook main CTA to scroll to profiles */
-$('#mainExplore')?.addEventListener('click', ()=> {
-  document.getElementById('profiles')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block:'start' });
-});
-
-/* share copy */
-$('#share')?.addEventListener('click', (e)=> {
-  e.preventDefault();
-  const text = `${location.href} — Chigiri Red-Pink demo`;
-  navigator.clipboard?.writeText(text).then(()=> flashToast('Copied link')).catch(()=> prompt('Copy this', text));
-});
-
-/* Apply initial meter state */
-needle.style.transform = 'rotate(-90deg)';
-fill.style.opacity = 0.35;
-
-/* Ensure bars animate if profile already visible */
-setTimeout(()=> {
-  const sec = document.querySelector('section[role="main"]');
-  if(sec && sec.getBoundingClientRect().top < window.innerHeight) animateBarsOnce();
-}, 700);
-
-/* Add minimal accessibility: focus-visible on keyboard nav */
-document.addEventListener('keydown', function(e){ if(e.key==='Tab') document.documentElement.classList.add('keyboard-nav'); });
-
-</script>
-
-<!-- small defs for SVGs (kept at end) -->
-<svg style="display:none">
-  <defs>
-    <linearGradient id="gStroke1" x1="0" x2="1"><stop offset="0" stop-color="#ff2d6d"/><stop offset="1" stop-color="#ff86a6"/></linearGradient>
-  </defs>
-</svg>
 </body>
 </html>
